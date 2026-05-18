@@ -460,63 +460,70 @@ const MetricsPage: React.FC<MetricsPageProps> = ({ processes }) => {
               </p>
             </div>
           ) : (
-            <>
-              {/* ── Live CPU Chart ── */}
-              <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">CPU Usage</p>
-                    <p className="text-xs text-neutral-400">rolling {livePoints.length} pts</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <StatCard label="Min" value={liveCpuStats.min} unit="%" color="text-emerald-500" />
-                    <StatCard label="Avg" value={liveCpuStats.avg} unit="%" color="text-primary-400" />
-                    <StatCard label="Max" value={liveCpuStats.max} unit="%" color="text-rose-400" />
-                  </div>
-                </div>
-                <div className="h-40">
-                  {livePoints.length > 0
-                    ? <Line data={liveCpuChart} options={chartOptions('%', 100)} />
-                    : <div className="h-full flex items-center justify-center text-xs text-neutral-400">
-                        Waiting for data...
-                      </div>
-                  }
-                </div>
-              </div>
+            {/* ── 2-column layout: charts left · process table right ────────────── */}
+            <div className="grid grid-cols-2 gap-4 items-stretch">
 
-              {/* ── Live Memory Chart ── */}
-              <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">Memory Usage</p>
-                    <p className="text-xs text-neutral-400">rolling {livePoints.length} pts</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <StatCard label="Min" value={liveMemStats.min} unit="MB" color="text-emerald-500" />
-                    <StatCard label="Avg" value={liveMemStats.avg} unit="MB" color="text-cyan-400" />
-                    <StatCard label="Max" value={liveMemStats.max} unit="MB" color="text-rose-400" />
-                  </div>
-                </div>
-                <div className="h-40">
-                  {livePoints.length > 0
-                    ? <Line data={liveMemChart} options={chartOptions('MB')} />
-                    : <div className="h-full flex items-center justify-center text-xs text-neutral-400">
-                        Waiting for data...
-                      </div>
-                  }
-                </div>
-              </div>
+              {/* Left column — CPU + Memory, each card grows to share the column height */}
+              <div className="flex flex-col gap-4">
 
-              {/* ── All processes snapshot table ── */}
-              <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-neutral-100 dark:border-neutral-800">
+                {/* ── Live CPU Chart ── */}
+                <div className="flex flex-col flex-1 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
+                  <div className="flex items-center justify-between mb-3 shrink-0">
+                    <div>
+                      <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">CPU Usage</p>
+                      <p className="text-xs text-neutral-400">rolling {livePoints.length} pts</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <StatCard label="Min" value={liveCpuStats.min} unit="%" color="text-emerald-500" />
+                      <StatCard label="Avg" value={liveCpuStats.avg} unit="%" color="text-primary-400" />
+                      <StatCard label="Max" value={liveCpuStats.max} unit="%" color="text-rose-400" />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-h-[140px]">
+                    {livePoints.length > 0
+                      ? <Line data={liveCpuChart} options={chartOptions('%', 100)} />
+                      : <div className="h-full flex items-center justify-center text-xs text-neutral-400">
+                          Waiting for data...
+                        </div>
+                    }
+                  </div>
+                </div>
+
+                {/* ── Live Memory Chart ── */}
+                <div className="flex flex-col flex-1 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
+                  <div className="flex items-center justify-between mb-3 shrink-0">
+                    <div>
+                      <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">Memory Usage</p>
+                      <p className="text-xs text-neutral-400">rolling {livePoints.length} pts</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <StatCard label="Min" value={liveMemStats.min} unit="MB" color="text-emerald-500" />
+                      <StatCard label="Avg" value={liveMemStats.avg} unit="MB" color="text-cyan-400" />
+                      <StatCard label="Max" value={liveMemStats.max} unit="MB" color="text-rose-400" />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-h-[140px]">
+                    {livePoints.length > 0
+                      ? <Line data={liveMemChart} options={chartOptions('MB')} />
+                      : <div className="h-full flex items-center justify-center text-xs text-neutral-400">
+                          Waiting for data...
+                        </div>
+                    }
+                  </div>
+                </div>
+
+              </div>{/* /left column */}
+
+              {/* Right column — process table fills the full shared height */}
+              <div className="flex flex-col rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-neutral-100 dark:border-neutral-800 shrink-0">
                   <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
                     All Processes — Live Snapshot
                   </p>
                 </div>
-                <div className="overflow-x-auto">
+                <div className="flex-1 overflow-y-auto overflow-x-auto">
                   <table className="w-full text-xs">
-                    <thead>
+                    <thead className="sticky top-0 bg-white dark:bg-neutral-900 z-10">
                       <tr className="text-left text-neutral-500 dark:text-neutral-400 border-b border-neutral-100 dark:border-neutral-800">
                         <th className="px-4 py-2 font-medium">Name</th>
                         <th className="px-4 py-2 font-medium">Status</th>
@@ -585,7 +592,8 @@ const MetricsPage: React.FC<MetricsPageProps> = ({ processes }) => {
                   </table>
                 </div>
               </div>
-            </>
+
+            </div>{/* /2-column grid */}
           )}
         </div>
       )}
@@ -684,65 +692,71 @@ const MetricsPage: React.FC<MetricsPageProps> = ({ processes }) => {
             </div>
           )}
 
-          {/* Charts */}
+          {/* ── 2-column layout: charts left · samples table right ── */}
           {selectedConn && selectedHistProc && (
-            <>
-              {/* History CPU Chart */}
-              <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">CPU Usage</p>
-                    <p className="text-xs text-neutral-400">{histMetrics.length} data points</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <StatCard label="Min" value={histCpuStats.min} unit="%" color="text-emerald-500" />
-                    <StatCard label="Avg" value={histCpuStats.avg} unit="%" color="text-primary-400" />
-                    <StatCard label="Max" value={histCpuStats.max} unit="%" color="text-rose-400" />
-                  </div>
-                </div>
-                <div className="h-40">
-                  {histMetrics.length > 0
-                    ? <Line data={histCpuChart} options={chartOptions('%', 100)} />
-                    : <div className="h-full flex items-center justify-center text-xs text-neutral-400">
-                        No data for selected range
-                      </div>
-                  }
-                </div>
-              </div>
+            <div className="grid grid-cols-2 gap-4 items-stretch">
 
-              {/* History Memory Chart */}
-              <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">Memory Usage</p>
-                    <p className="text-xs text-neutral-400">{histMetrics.length} data points</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <StatCard label="Min" value={histMemStats.min} unit="MB" color="text-emerald-500" />
-                    <StatCard label="Avg" value={histMemStats.avg} unit="MB" color="text-cyan-400" />
-                    <StatCard label="Max" value={histMemStats.max} unit="MB" color="text-rose-400" />
-                  </div>
-                </div>
-                <div className="h-40">
-                  {histMetrics.length > 0
-                    ? <Line data={histMemChart} options={chartOptions('MB')} />
-                    : <div className="h-full flex items-center justify-center text-xs text-neutral-400">
-                        No data for selected range
-                      </div>
-                  }
-                </div>
-              </div>
+              {/* Left column — CPU + Memory charts */}
+              <div className="flex flex-col gap-4">
 
-              {/* Raw table */}
-              <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-neutral-100 dark:border-neutral-800">
+                {/* History CPU Chart */}
+                <div className="flex flex-col flex-1 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
+                  <div className="flex items-center justify-between mb-3 shrink-0">
+                    <div>
+                      <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">CPU Usage</p>
+                      <p className="text-xs text-neutral-400">{histMetrics.length} data points</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <StatCard label="Min" value={histCpuStats.min} unit="%" color="text-emerald-500" />
+                      <StatCard label="Avg" value={histCpuStats.avg} unit="%" color="text-primary-400" />
+                      <StatCard label="Max" value={histCpuStats.max} unit="%" color="text-rose-400" />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-h-[140px]">
+                    {histMetrics.length > 0
+                      ? <Line data={histCpuChart} options={chartOptions('%', 100)} />
+                      : <div className="h-full flex items-center justify-center text-xs text-neutral-400">
+                          No data for selected range
+                        </div>
+                    }
+                  </div>
+                </div>
+
+                {/* History Memory Chart */}
+                <div className="flex flex-col flex-1 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
+                  <div className="flex items-center justify-between mb-3 shrink-0">
+                    <div>
+                      <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">Memory Usage</p>
+                      <p className="text-xs text-neutral-400">{histMetrics.length} data points</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <StatCard label="Min" value={histMemStats.min} unit="MB" color="text-emerald-500" />
+                      <StatCard label="Avg" value={histMemStats.avg} unit="MB" color="text-cyan-400" />
+                      <StatCard label="Max" value={histMemStats.max} unit="MB" color="text-rose-400" />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-h-[140px]">
+                    {histMetrics.length > 0
+                      ? <Line data={histMemChart} options={chartOptions('MB')} />
+                      : <div className="h-full flex items-center justify-center text-xs text-neutral-400">
+                          No data for selected range
+                        </div>
+                    }
+                  </div>
+                </div>
+
+              </div>{/* /left column */}
+
+              {/* Right column — raw samples table fills shared height */}
+              <div className="flex flex-col rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-neutral-100 dark:border-neutral-800 shrink-0">
                   <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
                     Recent Samples (last 20)
                   </p>
                 </div>
-                <div className="overflow-x-auto">
+                <div className="flex-1 overflow-y-auto overflow-x-auto">
                   <table className="w-full text-xs">
-                    <thead>
+                    <thead className="sticky top-0 bg-white dark:bg-neutral-900 z-10">
                       <tr className="text-left text-neutral-500 dark:text-neutral-400 border-b border-neutral-100 dark:border-neutral-800">
                         <th className="px-4 py-2 font-medium">Time</th>
                         <th className="px-4 py-2 font-medium">CPU</th>
@@ -773,8 +787,9 @@ const MetricsPage: React.FC<MetricsPageProps> = ({ processes }) => {
                   </table>
                 </div>
               </div>
-            </>
-          )}
+
+            </div>
+          )}{/* /2-column grid */}
         </div>
       )}
     </div>
