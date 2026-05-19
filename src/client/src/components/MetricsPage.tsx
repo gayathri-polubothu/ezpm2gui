@@ -460,8 +460,8 @@ const MetricsPage: React.FC<MetricsPageProps> = ({ processes }) => {
               </p>
             </div>
           ) : (
-            {/* ── 2-column layout: charts left · process table right ────────────── */}
             <div className="grid grid-cols-2 gap-4 items-stretch">
+              {/* charts left · process table right */}
 
               {/* Left column — CPU + Memory, each card grows to share the column height */}
               <div className="flex flex-col gap-4">
@@ -593,7 +593,7 @@ const MetricsPage: React.FC<MetricsPageProps> = ({ processes }) => {
                 </div>
               </div>
 
-            </div>{/* /2-column grid */}
+            </div>
           )}
         </div>
       )}
